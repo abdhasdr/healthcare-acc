@@ -1,64 +1,114 @@
-# No-Show Appointments
+---
+title: No-Show appointments
+description: Reduce late notice cancellations and no-show appointments (disrupted care) to ensure needed care and maximize booking efficiency.
 
-## Overview
-This is a use case that is practically **guaranteed to show a small but tangible amount of value in a short amount of time** while providing business-friendly insights and showing off the entire platform (including MLOps).  No show appointments are a part of a larger theme in health care called *Disrupted Care*. Minimizing disrupted care will ... **TBD: get text from Sally / Rob / Joe Blue**.
+---
 
-There are two primary opportunities supporting the Disrupted Care theme that the no-show use case addresses:
+# No-Show appointments {: #no-show-appointments }
 
-- Patients suffer if they do not get the care they require. Ensuring that patients show up for needed care plays a critical role in patient health.
-- A degree of certainty about an open slot in the schedule can be preemptively filled, either by standard over-booking or reaching out to a patient for a new visit which is recommended by another model (e.g. propensity for asthma attack, etc.)
+This accelerator addresses how to minimize no-shows and add confidence to preemptive rebookings.
 
-### What problem are we trying to solve?
+**AI Impact:** Addressing no-show appointments improves patient outcomes, decreases loss of revenue.
 
-About 5% of scheduled office visits result in the patient not showing (or canceling within a short window which most providers also consider no-show). The pain directly attributable to no-show is the missed revenue from visits (an average of $180). _Future objection handling: Automated email reminders are probably already in use and yet the no-show rate is still ~5%._
+**Prediction details:** Create a model that predicts whether a patient will arrive for an appointment.
 
-Other indirect pains include staffing innefficiency and impact to patient health/satisfaction. Using an AI-powered approach to this problem is feasible with the data a customer already has and can represent a “quick win” for the business.
+**Skill level**: ??
 
-`Pro tip: An interesting flip on the no-show in the case of **home health**. In that case we focus on no-show by the **nurse**, which disrupts patient care more directly.` 
+## Business details {: #business-details }
 
-### What is the value to the customer?
+In roughly 5% of scheduled office visits, the patient either does not present or cancels within a window too short for re-booking. Most providers consider this a "no-show." No-show appointments are a subset of a critical health care issue known as _disrupted care_ and cost, on an average, $180 per incident.
 
-- A prediction for a patient no-show with enough lead time may present an opportunity to reach out to the patient to ensure attendance or reschedule the appointment.
-- Aggregating predictions at the begninning of the week can assist with staffing and number of appointments that can be booked.
+!!! tip
+    This 5% value _includes_ consideration of automated email reminders.
 
-### What are we trying to predict?
+There are two primary opportunities that this use case addresses:
 
-The no-show appointment use case is a binary classification that predicts if a patient will show up for an appointment or not (usually a last-minute cancellation = no-show). 
+Issue | Opportunity
+----- | -----------
+Patient outcome | Patients suffer if they do not get the care they require. Ensuring attendance plays a critical role in patient health.
+Revenue loss | A degree of certainty about an open booking slot allows for  preemptive filling by: <br> &bull; Standard over-booking.<br>&bull; Using a "propensity for" model to contact an alternative patient.
+Staffing inefficiency | Correct staffing levels improve both patient and employee satisfaction.
+Staffing no-shows | In the case of "home health," nurses not arriving when scheduled disrupts patient care more directly.
 
-The two main consumption models for no-show appointments:
+### Solution value
 
-1. prioritize a call-list the week before the appointments 
-2. filling open appointments (i.e overbooking).
+The following are direct benefits of predicting no-shows:
 
-Both require a fairly short time window. If you predict no-shows 6 months from now, it doesn’t make sense to send reminders and your customer is probably still booking appointments normally. One week seems about standard and provides enough time to contact a patient or re-book.
+* Predicting with sufficient lead time may present an opportunity to reach out to the patient to ensure attendance or reschedule the appointment.
 
-Consumption of the model is relatively simple. Unless the customer wants insights (e.g. why is the no-show rate for one clinic/provider significantly higher than others?), you can accomplish this by processing all of next week’s appointments on Friday morning to create the prioritized list. The call list may be broken out by clinic and distributed separately. Prediction explanations can be helpful but aren’t always required. Generally the efficacy of reaching out to a patient with a reminder will not improve if more information is given. 
+* Aggregating predictions at the beginning of the week can assist with staffing and number of appointments that can be booked.
 
-Often when giving a demo it helps to break out the expected no-show rate by location (i.e. no show rate by zip code on a map) because it helps visualize the opportunity for the customer.
+### Qualification criteria
 
-### How does DataRobot help?
+Consider these questions before beginning the project:
 
-DataRobot automatically performs the following tasks…
+* hmmmm
+* uhhhhh
+* welllll
 
-- Connects to your data and determines which data sources are relevant and visualizes the contribution to accuracy and the relationship between each column and no-show.
-- Our data prep tool can help you aggregate powerful predictors such as historical patient no-show rate.
-- Performs NLP on text data which could also include booking notes - then visualizes how snippets of text may affect no-shows.
-- Trains dozens of potential solutions and helps you optimize the cost of a bad prediction vs. the value of a good one. 
-- Recommends a solution *guaranteed* to be unbiased on race and gender (and any other feature you’d like to control for)
-- Generates explanations that contribute to each high score
-- Dcouments that your solution treats protected classes fairly with built-in bias & fairness assessment
-- Prepares the model to make predictions that integrate with your BI tools or generate a prioritized call-list that optimizes you contacts
-- Tracks the health of your model (including bias) and notifies you whenever a potential issue needs to be addressed
+## Technical details {: #technical-details }
 
-## Data & Features
+I DROPPED THIS BECAUSE YOU DON'T SEEM TO MENTION IT AGAIN: `2. Fill open appointments (i.e., overbooking). IF THEY ARE OPEN IT IS NOT OVERBOOKING. ALSO WHY DOES "FILL OPEM APPOINTMENTS" NEED A SHORT TIME WINDOW? IS IT ADDRESSED BELOW?`
 
-We generaly like to see 2 years of historical appointments with show/no-show as the target. 2 years of history is prefered to include seasonality and some before/after COVID activity. `Pro-tip: you will want to engineer historical no-show rates at patient, physician, and office/clinic level. Use description of visit rather than a numeric code and you’ll get more interpretable word clouds.`
 
-The shape of the data should be at the visit level (one row per visit) and must include the patient ID, the date/time of the scheduled appointment, the date the appointment was scheduled, the location of the appointment, and the physician seen + the target. Here are some important data sources: 
-- **Demographics** - including age & gender, occupational status + location (when a hospital is concentrated in one area, the effect of geography is muted). If possible, we’d like to know the info about the responsible custodian if the patient is a minor. 
-- **Patient history** - comorbidities, procedures, medications, etc.
-- **Weather** data (if available) - can affect travel between home and clinic if extreme conditions exist - this one is fun to include but unlikely to help. _Extra pro tip: watch out for leakage on this one. You have to use the forecasted weather not actuals _
-- **County** (COVID) data (if available) - number of cases may affect certain types of visits, including vaccinations. Hopefully we can phase this out soon.
+The main consumption model you will build for no-show appointments is to create a prioritizes call-list the week prior to appointments. This model requires a fairly short time window. If you predict no-shows for six months from now, for example, it doesn’t make sense to send reminders. One week is standard standard and provides enough time to contact a patient or re-book.
+
+Consumption of the model is relatively simple. You can process all of next week’s appointments on Friday morning to create a prioritized list. The call list can be broken out by clinic and distributed to stakeholders. [Prediction Explanations](pred-explain/index) may be helpful but aren’t always required since, generally, the efficacy of reaching out to a patient with a reminder will not improve if more information is given.
+
+!!! tip
+	This process is to determine no-shows. If you want insights (for example, why is the no-show rate for one clinic or provider significantly higher than others?), DO THIS INSTEAD.
+
+### How does DataRobot help? {: #how-does-datarobot-help }
+
+DataRobot automates the following tasks in this use case: DOES THE USE CASE ACTUALLY USE ALL THESE?
+
+* Connects to your data and determines which data sources are relevant and visualizes the contribution to accuracy and the relationship between each column and no-show. [LINK TO HOW/WHAT]
+
+* Aggregates predictors such as historical patient no-show rate. [LINK TO HOW/WHAT]
+
+* Performs NLP on text data (for example, booking notes) then visualizes how snippets of text may affect no-shows. [LINK TO HOW/WHAT]
+
+* Trains dozens of potential solutions and helps you optimize the cost of a bad prediction vs. the value of a good one. IS THIS PROFIT CURVE?
+
+* Recommends a solution where you can apply [bias mitigation](bias-mitigation), for example for race or gender. WE CANNOT GUARANTEE ANYTHING...I CHANGED THIS BUT WANT TO ENSURE IT DOESN'T COME BACK WITH THE WORD GUARANTEE.
+
+* Generates [explanations](pred-explain/index) that contribute to each score. YOU SAID ABOVE THESE WEREN'T NEEDED 
+
+* Documents that your solution treats protected classes fairly with a built-in bias and fairness assessment. DOCUMENTS IN WHAT WAY? COMPLIANCE REPORT? VISUALIZATIONS?
+
+* Prepares the model to make predictions that integrate with your BI tools or to generate a prioritized call-list that optimizes your contacts. I DONT UNDERSTAND THIS
+
+* Tracks the health of your model (including bias and other [model monitoring](monitor/index)) and notifies you whenever a potential issue needs to be addressed
+
+## Data prep {: #data-prep }
+
+For best results, your dataset should cover two years of historical appointments with `show/no-show` as the target. This time window will allow inclusion of both seasonality and some before/after COVID activity. 
+
+!!! tip
+	Engineer historical no-show rates at the patient, physician, and office/clinic level. Use a description of the visit, rather than a numeric code, for more interpretable [word clouds](word-cloud).
+
+The shape of the data should be at the visit level (one row per visit) and must include:
+
+* Patient ID
+* Date/time of the scheduled appointment
+* Date the appointment was made
+* Appointment location
+* Physician seen
+* Target (`show/no-show`)
+
+The following additional data, if available, is beneficial to produce the most accurate model: SOURCES? DO YOU MEAN ADDITIONAL DATA?
+
+* Demographics, including age and gender, occupational status, and site location. (When a hospital is concentrated in one area, the effect of geography is muted.) DONT UNDERSTAND THE PARENTHETICAL. "A HOSPITAL" IS ALWAYS CONCENTRATED, NO? 
+
+* If the patient is a minor, information about the responsible custodian. SUCH AS?
+
+* Patient history, such as comorbidities, procedures, medications, etc.
+
+* Weather data, as it can affect travel between home and clinic if extreme conditions exist. This one is fun to include but unlikely to help. If you do include it, watch for leakage&mdash;use the forecasted weather, not actuals UMMMMM, DO WE WANT TO TELL THEM THIS?
+
+* County COVID data (if available). The number of cases may affect certain types of visits, including vaccinations. Hopefully we can phase this out soon.
+
+#### Sample schema {: #sample-schema }
 
 A sample schema used with a customer is below:
 
@@ -106,7 +156,9 @@ A sample schema used with a customer is below:
 | RheumaticDisease        | Binary      | Indicator variable for various conditions that the patient has been previously diagnosed with |
 | ConditionCount          | Numerical   | Count of special conditions                                  |
 
-Here is some sample data for the above schema
+#### Sample data {: #sample-data }
+
+The following shows sample data for the above schema:
 
 | DNA  | SITE | ClinicName                           | ClinicType | Hour | Day  | Month | Duration | LeadTime | ATTEND_TYPE | Priority | Specialty                                   | IsCancerRef | Attendance | PreviousDNA | Sex    | ActualAge | IncomeDecile | CrimeDecile | EmploymentDecile | EducationDecile | HealthDecile | HousingDecile | EnvironmentDecile | RoadMiles | Liver Disease | MI   | Dementia | Peptic Ulcer | Congestive Heart Failure | Connective Tissue Disorder | Crohn's Disease | Diabetes | Hemi/Paraplegia | Pulmonary Disease | HIV/AIDS | Vascular Disease | Cancer | Renal Disease | Rheumatic Disease | ConditionCount |
 | ---- | ---- | ------------------------------------ | ---------- | ---- | ---- | ----- | -------- | -------- | ----------- | -------- | ------------------------------------------- | ----------- | ---------- | ----------- | ------ | --------- | ------------ | ----------- | ---------------- | --------------- | ------------ | ------------- | ----------------- | --------- | ------------- | ---- | -------- | ------------ | ------------------------ | -------------------------- | --------------- | -------- | --------------- | ----------------- | -------- | ---------------- | ------ | ------------- | ----------------- | -------------- |
@@ -131,64 +183,113 @@ Here is some sample data for the above schema
 | 0    | RLI  | f greenhalgh dietitian  rli          | Regular    | 10   | 1    | 1     | 20       | 126      | CC_FOLLOWUP | 3        | DIETETICS                                   | 0           | 0.67       | 1           | Female | 4         | 4.75         | 2.85        | 4.25             | 4.35            | 3            | 6.88          | 4                 | 2.4       | 0             | 0    | 0        | 0            | 0                        | 0                          | 0               | 0        | 0               | 0                 | 0        | 0                | 0      | 0             | 0                 | 0              |
 | 0    | RLI  | f greenhalgh dietitian  rli          | Regular    | 9    | 2    | 1     | 20       | 96       | CC_FOLLOWUP | 3        | DIETETICS                                   | 0           | 0.64       | 1           | Female | 2         | 5.25         | 2.75        | 4.85             | 4.75            | 3            | 7.166666667   | 3.75              | 4.8       | 0             | 0    | 0        | 0            | 0                        | 0                          | 0               | 0        | 0               | 0                 | 0        | 0                | 0      | 0             | 0                 | 0              |
 
-## Models & Insights
+## Modeling and insights {: #modeling-and-insights }
 
-### Recommended model settings
+The following sections provide some consideration to keep in mind for modeling.
 
-- Usually run as OTV - you want the model optimized on the most recent data (and you have a built-in holdout)
-- If not able to run OTV, use an entire year with group partitioning on patient ID
-- Aggregation (rather than feature discovery) is more likely to yield easily interpretable findings. 
-- One of the key features is historical no-show rate. Might want to experiment with 30/90/180 day windows.
-- Use caution when generating historical no-show rates. Should be based on appointment date to avoid leakage.
-- For all others use default settings (validation, optimization metric, etc.)
+### Recommended settings {: #recommended-settings }
 
-### What are some of the key insights identified?
+For this use case, consider the following for model building:
 
-- The more time that has passed between the scheduled date and the appointment date, the higher the no-show rate (i.e. people forget or sh*t happens).
-- Patients who were late in the past are more likely to show up in the future (i.e historical no-show rate). It’s likely that historical no-show rates at the clinic, office, or physician level will also yield interesting insights. 
-- A combination of age / visit type can yield interesting insights: children always show up because parents care for their children more than we care for ourselves. Also, minor or routine visits like flu shots and mammograms have lower no-show rates. `Pro tip: this may not yield usable insights. results may vary`
+- Run the project as [OTV](otv) so that the model is optimized on the most recent data (and you have a built-in holdout). If you are not able to run OTV, use an entire year with [group partitioning](partitioning#group-partitioning-group) on patient ID. WHY WOULDN'T THEY BE ABLE TO?
 
-*Bias could be a factor and if available it should be included. There isn’t a huge legal issue or fine if this model contains bias, but as this is a differentiator for us, it’s recommended that the customer is aware of this capability.*
+- Aggregation (rather than feature discovery) is more likely to yield easily interpretable findings. DEFINE AGGREGATION. IN PAXATA? DONT THINK WE SHOULD RECOMMEND A PROCESS THAT MAY NOT BE AVAILABLE OR COSTS
 
-### Model Interpretation 
-Below are some examples from an actual project completed by a customer. They are meant for illustration only. Your customer can expect _similar_ insights but avoid making guarantees. The below are included as examples that should resonate with the business and earn trust on the rest of the model's insights.
+- Consider experimenting with 30/90/180-day windows since one of the key features is historical no-show rate. THIS TIME WINDOW INSTEAD OF THE 1 YEAR YOU RECOMMENDED ABOVE?
 
-Sample feature impact. 
-![noshow_sharp_impact](noshow_impact.png)
+- Use caution when generating historical no-show rates. Should be based on appointment date to avoid leakage. THIS DOESN'T APPEAR TO BE A SETTING--WHAT SHOULD BE BASED ON APPOINTMENT DATE? IF TARGET IS SHOW/NO, WHAT IS THE "BASIS" FIELD?
 
-Example feature effect for _days since scheduled_ (target = prob[no-show])
-![noshow_sharp_effects](noshow_effects.png)
+- For all other settings, you can use the default values (for example, validation, optimization metric, etc.)
 
-Example feature effect for "Historical no-show rate" (target = prob[no-show])
-![no_show_sharp_NOS](no_show_NOS.png)
+DON'T YOU WANT TO TELL THEM TO SET UP BIAS MITIGATION?
 
-Example word cloud based on appointment type:
-![noshow_sharp_wordcloud](noshow_wordcloud.png)
+### Key insights {: #key-insights }
+
+Some of the key general insights from this use case are:
+
+- The more time that has passed between the date-of-scheduling and the appointment date, the higher the no-show rate.
+
+- Patients who were late in the past are more likely to show up in the future (i.e., historical no-show rate). It’s likely that historical no-show rates at the clinic, office, or physician level will also yield interesting insights. WHAT FEATURE IS MEASURING WHETHER THEY WERE LATE VS A NO SHOW? NOT SURE HOW THESE SENTENCES QUITE TIE TOGETHER EITHER
+
+- A combination of age/visit type can yield interesting insights&mdash;children always show up because parents care for their children more than they care for themselves. 
+
+- Depending on your clientele, minor or routine visits (for example, flu shots, mammograms) have lower no-show rates. 
+
+*Bias could be a factor and should be investigated.*
+
+### Model interpretation {: #model-interpretation }
+
+The following are examples from a completed use case, meant for illustration only. You can expect _similar_ insights but your data will dictate.
+
+IS IT OK TO SHOW CUSTOMER DATA? I THINK NO...
+
+Use [Feature Impact](feature-impact) to visualize, at a high level, which features are driving model decisions the most. 
+
+![](images/sa-noshow-impact.png)
+
+The following shows an example of [Feature Effects](feature-effects) for _days since scheduled_ (target = `no-show`)
+
+THIS DOESN'T LOOK LIKE FEATURE EFFECTS...IT LOOKS SORT OF LIKE THE HISTOGRAM
+
+![](images/sa-noshow-effects.png)
+
+The following shows an example of [Feature Effects](feature-effects) for "Historical no-show rate" (target = `no-show`)
+
+THIS _DOES_ LOOK LIKE FEATURE EFFECTS...MENTION PARTIAL DEPENDENCE AND WHY THAT MATTERS AND ALSO THERE IS NOTHING IN HERE CALLED "Historical no-show rate"
 
 
-## Results
+![](images/sa-no-show-nos.png)
 
-Logloss or AUC can be deceptive metrics. You'll want to look at the confusion matrix to estimate ROI. 
-However, simply using the raw prediction works for rank-odering the call list.
+The following show a word cloud based on appointment type: AND TELLS YOU WHAT? TIE THIS BACK TO THE USE CASE
 
-### Threshold analysis and other metrics
+![](images/sa-noshow-wordcloud.png)
 
-- In a recent POV, a customer shared that $180 is the average missed revenue of a no-show appointment and $4 is the avg cost of a (non-automated) phone call reminder
-- The values can help fill out a profit matrix - we consider TP and FN to be $0 since that represents the status quo.
-- Maximizing the profit provides estimated ROI and a threshold. It's useful to assume a conservative turnaround rate (e.g. only 30% of patients reminded  will change their behavior)
-- Consideration for operational constraints should be a factor. It's unlikely that a doctor's office has time to reach out to every patient with a reminder, nor overbook 100% of visits. 
 
-### How is the model consumed?
-- The model should be deployed after threshold is set for maximum ROI.
-- In setting up the model for use, it's important to automate the features (either the aggregation or secondary files for discovery)
-- If the file is prepared you can use the drag-and-drop prediction option if the customer doesn't have the resources to use the API. 
-- Option 1: csv is fine for call-list, but phone-numbers are looked up by the dialer or linked beforehand. It's most likely the list will be stratified and distributed by clinic or office (because each is responsible for its own patients).
-- Option 2: a dashboard can be created (or AI apps) that allows the user to browse number of predicted no-shows by office and those vacancies can be filled either by FIFO or a cultivated list of recommended patients (supplied by another model).
+## Results OF WHAT? WEREN'T THE VISUALIZATION RESULTS?
 
-### How important is monitoring?
-- For this use case it's important to monitor drift because there are seasonal changes as well as changes in overall public health (esp. during COVID)
-- Note: if you use day of the week or month in your model (not completely without value) then your drift will always start off as a red alert (and will stay that way until it's seen enough data)
-- You'll want to key an eye on the aggregated features. They're impactful and also the most likely place for error (or delay in updating). 
-- Monitoring accuracy is viable (you should have actuals arriving every day)
-- Bias/fairness is a nice feature but some of the worst outcomes (i.e. fines, public outcry) are not applicable here
+Logloss or AUC can be deceptive metrics. YOU SAID TO USE THE DEFAULT METRICS. You'll want to look at the confusion matrix to estimate ROI. NOT THE PROFIT CURVE? ALSO, WHY ISN'T INCLUDED WITH THE VIZ ABOVE IF THEY WANT TO LOOK AT IT.
 
+However, simply using the raw prediction works for rank-ordering the call list. CAN YOU SHOW US A RESULT OF THAT PREDICTION?
+
+### Further analysis {: #further-analysis }
+
+Based on average industry values, you can complete [Profit Curve](profit-curve) making the following assumptions:
+
+- Missed revenue of a no-show appointment: $180 
+- Avgerage cost of a (non-automated) phone call reminder: $4
+- TP and FN values: $0 (because that represents the status quo)
+
+Maximizing profit provides estimated ROI and a threshold. It's useful to assume a conservative turnaround rate (e.g., only 30% of patients reminded  will change their behavior).
+
+A THRESHOLD FOR WHAT/WHERE IS THAT APPLIED. WHERE DO YOU APPLY THAT 30%?
+
+Operational constraints are also a factor. It's unlikely that a doctor's office has time to reach out to every patient with a reminder, nor overbook 100% of visits. 
+
+## Model serving {: #model-serving }
+
+Deploy your model after setting the threshold for maximum ROI. WHERE DO THEY DO THIS? DO YOU MEAN PREDICTION THRESHOLD?
+
+- In setting up the model for use, it's important to automate the features (either the aggregation or secondary files for discovery) HOW DO THEY DO THIS?
+
+- If the file WHAT FILE is prepared DEFINE PREPARED you can use the drag-and-drop in the UI or the API for predictions. WHICH API APPROACH ARE YOU RECOMMENDING?
+
+WHAT ARE THESE OPTIONS OF/FOR? IS THIS LIKE "HOW TO NOW USE YOUR MODEL"?
+
+- Option 1: Using a CSV file is fine for a call-list, but phone numbers are looked up by the dialer or linked beforehand.THIS IMPACTS WHAT? It's most likely the list will be stratified and distributed by clinic or office (because each is responsible for its own patients). NOT CLEAR WHAT THE POINT IS HERE
+
+- Option 2: You can create a dashboard or [an AI app](app-builder/index) that allows browsing the  number of predicted no-shows by office. Those vacancies can then be filled either by FIFO or a cultivated list of recommended patients (supplied by another model).
+
+## Monitoring and management {: #monitoring-and-management }
+
+It is important to [monitor](monitor/index) your model's predictive performance. Specifically:
+
+* Monitor [data drift](data-drift) because there are seasonal changes as well as changes in overall public health. (This has shown especially true during the recent COVID pandemic).
+
+	!!! note
+		If you use day-of-week or month in your model (not completely without value) then your drift will always start off as a red alert (and will stay that way until the model has seen enough data). WHAT MIGHT YOU USE IF NOT DAY OR MONTH?
+
+* Keep an eye on the aggregated features. HOW, AND WHAT ARE THESE AND DID WE MAKE THEM OURSELVES. They're impactful and also the most likely place for error (or delay in updating). 
+
+* Monitoring [accuracy](deploy-accuracy) is a viable approach since you should have actuals arriving every day.
+
+* [Fairness monitoring](mlops-fairness), while not a requirement, can provide interesting insights.
